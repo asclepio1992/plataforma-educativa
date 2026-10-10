@@ -1,0 +1,8 @@
+window.inlineSlideStats=(container,slide,roster,results)=>{
+ const active=roster.filter(s=>s.active),answers=active.map(s=>results?.[slide.id]?.[s.id]).filter(Boolean),total=answers.length,pct=n=>total?Math.round(n*1000/total)/10:0;
+ function decorate(node,count,index){if(!node)return;node.classList.add('live-option');node.style.setProperty('--option-share',pct(count)+'%');node.style.setProperty('--option-color',['#76aaff','#6bd4bc','#b6a0f3','#edbf78','#86cadd','#e59bb9'][index%6]);let badge=node.querySelector('.inline-option-stat');if(!badge){badge=document.createElement('span');badge.className='inline-option-stat';node.append(badge);}badge.replaceChildren();const percent=document.createElement('strong'),number=document.createElement('small');percent.textContent=pct(count)+'%';number.textContent=count+' '+(count===1?'respuesta':'respuestas');badge.append(percent,number);}
+ if(slide.options){const options=container.querySelectorAll('.quiz-option,.stage-live-option');slide.options.forEach((option,i)=>decorate(options[i],answers.filter(a=>a.choice===i).length,i));}
+ else if(slide.statements){const rows=container.querySelectorAll('.statement-answer-row,.stage-live-statement');rows.forEach((row,i)=>{const options=row.querySelectorAll('.statement-choice,.stage-live-option');[true,false].forEach((value,j)=>decorate(options[j],answers.filter(a=>a.values?.[i]===value).length,j));});}
+ else return;
+ let caption=container.querySelector('.inline-response-caption');if(!caption){caption=document.createElement('div');caption.className='inline-response-caption';container.append(caption);}caption.textContent='● En vivo · '+total+' de '+active.length+' alumnos respondieron · % entre respuestas recibidas';
+};

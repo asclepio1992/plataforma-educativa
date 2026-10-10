@@ -1,0 +1,20 @@
+services:
+  aula:
+    build: .
+    restart: unless-stopped
+    init: true
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      AULA_DATA_DIR: /app/data
+      AULA_PUBLIC_URL: ${AULA_PUBLIC_URL:?Define la direccion publica HTTPS en .env}
+      TEACHER_PASSWORD: ${TEACHER_PASSWORD:?Define la contrasena inicial en .env}
+      AULA_PERSISTENT_STORAGE: "1"
+      AULA_TRUST_PROXY: "1"
+    volumes:
+      - aula-data:/app/data
+    stop_grace_period: 20s
+volumes:
+  aula-data:

@@ -1,0 +1,22 @@
+# Blueprint de prueba. Render Free NO conserva datos al reiniciar.
+# Para clases reales, configura un disco persistente en un servicio de pago
+# y apunta AULA_DATA_DIR a su ruta antes de importar tus clases.
+services:
+  - type: web
+    name: aula-studio
+    runtime: node
+    plan: free
+    buildCommand: npm ci --omit=dev
+    startCommand: node server.js
+    healthCheckPath: /readyz
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 24.21.0
+      - key: TEACHER_PASSWORD
+        sync: false
+      - key: AULA_PERSISTENT_STORAGE
+        value: "0"
+      - key: AULA_DATA_DIR
+        value: ./data

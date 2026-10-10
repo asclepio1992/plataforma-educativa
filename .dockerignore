@@ -1,0 +1,14 @@
+node_modules
+.git
+.agents
+.codex
+.aws
+.env
+.env.*
+data
+tmp
+output
+*.test.js
+*.log
+README.md
+DEPLOYMENT.md
