@@ -17,7 +17,7 @@ async function handleTeaching(ctx){const {req,res,url,DATA,rooms,templates,quest
   if(req.method==='DELETE'){const data=await body(req,4096);questionBank.delete(data.id);persist();send(res,200,{ok:true});return true;}
  }
  if(url.pathname==='/api/backup'&&req.method==='GET'){
-  teacherOnly();res.setHeader('Content-Disposition',`attachment; filename="aula-respaldo-${new Date().toISOString().slice(0,10)}.json"`);send(res,200,backupPayload({DATA,rooms,templates,questionBank,groups,studio:require('./server').studio}));return true;
+  teacherOnly();const store=require('./server').studio,id=store.backup(ctx,true),stream=store.streamBackup(id);res.writeHead(200,{'Content-Type':'application/json; charset=utf-8','Content-Disposition':`attachment; filename="aula-respaldo-${new Date().toISOString().slice(0,10)}.json"`,'Cache-Control':'no-store'});stream.on('error',()=>res.destroy());res.on('close',()=>stream.destroy());stream.pipe(res);return true;
  }
  if(url.pathname==='/api/restore'&&req.method==='POST'){
   teacherOnly();const data=await body(req,200*1024*1024);if(data.schema!=='aula-backup-v1'||!Array.isArray(data.rooms)||data.rooms.length>500||!Array.isArray(data.files)||data.files.length>15000||!Array.isArray(data.templates)||!Array.isArray(data.questionBank))fail('Respaldo inválido o demasiado grande.');
